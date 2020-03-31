@@ -1,4 +1,7 @@
 #include "RenderSystem.hh"
+#include "RenderProgram.hh"
+#include "VertexBuffer.hh"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -14,7 +17,7 @@ RenderSystem::~RenderSystem() {
 }
 
 const char* glEnumToString(GLenum e) {
-  std::map<GLenum, const char*> map = {
+  return std::map<GLenum, const char*> {
     PAIR(GL_DEBUG_SOURCE_API),
     PAIR(GL_DEBUG_SOURCE_APPLICATION),
     PAIR(GL_DEBUG_SOURCE_OTHER),
@@ -36,13 +39,15 @@ const char* glEnumToString(GLenum e) {
     PAIR(GL_DEBUG_TYPE_PUSH_GROUP),
     PAIR(GL_DEBUG_TYPE_POP_GROUP),
     PAIR(GL_DEBUG_TYPE_OTHER)
-  };
-
-  return map[e];
+  }[e];
 }
 
 static void GLAPIENTRY debugCallback(GLenum source, GLenum type, GLuint id,
        GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+
+  if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
+    return;
+  }
 
   std::cerr << "OpenGL has something to say:\n"
             << "Source: " << glEnumToString(source) << "\n"
@@ -64,9 +69,6 @@ bool RenderSystem::create(int width, int height, const char* title) {
   glewInit();
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(debugCallback, nullptr);
-
-  // This should trigger debug callback.
-  glClear(GL_VERTEX_ARRAY);
 
   return true;
 }
@@ -123,4 +125,40 @@ void RenderSystem::beginFrame() const {
 
 void RenderSystem::endFrame() const {
   glfwSwapBuffers(std::any_cast<GLFWwindow*>(m_window));
+}
+
+void RenderSystem::draw(const VertexBuffer& buffer,
+    const RenderProgram& program,
+    Primitive primitive) {
+
+  GLenum mode;
+
+  mode = std::map<Primitive, GLenum> {
+    {Triangles, GL_TRIANGLES},
+    {Lines, GL_LINES},
+    {Points, GL_POINTS}
+  }[primitive];
+
+  glBindBuffer(GL_ARRAY_BUFFER, buffer.m_id);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, position));
+
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, color));
+
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, uv));
+
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+
+  glUseProgram(program.m_id);
+
+  glDrawArrays(mode, 0, buffer.getVerticesCount());
+
+  glDisableVertexAttribArray(3);
+  glDisableVertexAttribArray(2);
+  glDisableVertexAttribArray(1);
 }

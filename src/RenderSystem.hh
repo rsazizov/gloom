@@ -6,8 +6,17 @@
 
 #include "NonCopyable.hh"
 
+class RenderProgram;
+class VertexBuffer;
+
 class RenderSystem : private NonCopyable {
 public:
+  enum Primitive {
+    Points,
+    Lines,
+    Triangles
+  };
+
   RenderSystem();
   ~RenderSystem();
 
@@ -26,8 +35,12 @@ public:
 
   void beginFrame() const;
   void endFrame() const;
+
+  void draw(const VertexBuffer& buffer,
+      const RenderProgram& program,
+      Primitive primitive=Triangles);
 private:
-  glm::vec3 m_clearColor = glm::vec3(0, 0, 1);
+  glm::vec3 m_clearColor = glm::vec3(0, 0, 0);
   std::any m_window;
 };
 
