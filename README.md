@@ -6,11 +6,12 @@ Gloom is an OpenGL based DOOM renderer.
 
 * glm
 * glfw3
+* glew
 
 All the requirements can be installed with the following command (on Ubuntu/Debian)
 
 ```
-sudo apt install libglm-dev libglfw3-dev
+sudo apt install libglm-dev libglfw3-dev libglew-dev
 ```
 
 ## Usage

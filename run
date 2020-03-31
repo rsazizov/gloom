@@ -1,0 +1,145 @@
+let s:cpo_save=&cpo
+set cpo&vim
+inoremap <silent> <expr> <Plug>+ deoplete#mapping#_dummy('deoplete#mapping#_prev_complete')
+inoremap <silent> <expr> <Plug>_ deoplete#mapping#_dummy('deoplete#mapping#_complete')
+inoremap <Plug>(emmet-merge-lines) =emmet#util#closePopup()=emmet#mergeLines()
+inoremap <Plug>(emmet-anchorize-summary) =emmet#util#closePopup()=emmet#anchorizeURL(1)
+inoremap <Plug>(emmet-anchorize-url) =emmet#util#closePopup()=emmet#anchorizeURL(0)
+inoremap <Plug>(emmet-remove-tag) =emmet#util#closePopup()=emmet#removeTag()
+inoremap <Plug>(emmet-split-join-tag) :call emmet#splitJoinTag()
+inoremap <Plug>(emmet-toggle-comment) =emmet#util#closePopup()=emmet#toggleComment()
+inoremap <Plug>(emmet-image-encode) =emmet#util#closePopup()=emmet#imageEncode()
+inoremap <Plug>(emmet-image-size) =emmet#util#closePopup()=emmet#imageSize()
+inoremap <Plug>(emmet-move-prev-item) :call emmet#moveNextPrevItem(1)
+inoremap <Plug>(emmet-move-next-item) :call emmet#moveNextPrevItem(0)
+inoremap <Plug>(emmet-move-prev) =emmet#util#closePopup()=emmet#moveNextPrev(1)
+inoremap <Plug>(emmet-move-next) =emmet#util#closePopup()=emmet#moveNextPrev(0)
+inoremap <Plug>(emmet-balance-tag-outword) :call emmet#balanceTag(-1)
+inoremap <Plug>(emmet-balance-tag-inward) :call emmet#balanceTag(1)
+inoremap <Plug>(emmet-update-tag) =emmet#util#closePopup()=emmet#updateTag()
+inoremap <Plug>(emmet-expand-word) =emmet#util#closePopup()=emmet#expandAbbr(1,"")
+inoremap <Plug>(emmet-expand-abbr) =emmet#util#closePopup()=emmet#expandAbbr(0,"")
+vnoremap  "+y
+map  h
+map <NL> j
+map  k
+map  l
+nnoremap <silent>  :CtrlP
+nnoremap  "+P
+vmap c <Plug>(emmet-code-pretty)
+nmap m <Plug>(emmet-merge-lines)
+nmap A <Plug>(emmet-anchorize-summary)
+nmap a <Plug>(emmet-anchorize-url)
+nmap k <Plug>(emmet-remove-tag)
+nmap j <Plug>(emmet-split-join-tag)
+nmap / <Plug>(emmet-toggle-comment)
+nmap I <Plug>(emmet-image-encode)
+nmap i <Plug>(emmet-image-size)
+nmap N <Plug>(emmet-move-prev)
+nmap n <Plug>(emmet-move-next)
+vmap D <Plug>(emmet-balance-tag-outword)
+nmap D <Plug>(emmet-balance-tag-outword)
+vmap d <Plug>(emmet-balance-tag-inward)
+nmap d <Plug>(emmet-balance-tag-inward)
+nmap u <Plug>(emmet-update-tag)
+nmap ; <Plug>(emmet-expand-word)
+vmap , <Plug>(emmet-expand-abbr)
+nmap , <Plug>(emmet-expand-abbr)
+nnoremap  w :w
+nnoremap  x :x
+nnoremap  f :NERDTreeToggle
+nnoremap  r :!love .
+nnoremap   :nohl
+nnoremap <silent> K :call LanguageClient#textDocument_hover()
+xmap S <Plug>VSurround
+vmap [% [%m'gv``
+vmap ]% ]%m'gv``
+vmap a% [%v]%
+nmap cS <Plug>CSurround
+nmap cs <Plug>Csurround
+nmap ds <Plug>Dsurround
+vmap gx <Plug>NetrwBrowseXVis
+nmap gx <Plug>NetrwBrowseX
+nmap gcu <Plug>Commentary<Plug>Commentary
+nmap gcc <Plug>CommentaryLine
+omap gc <Plug>Commentary
+nmap gc <Plug>Commentary
+xmap gc <Plug>Commentary
+xmap gS <Plug>VgSurround
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()
+nnoremap j gj
+nnoremap k gk
+nmap ySS <Plug>YSsurround
+nmap ySs <Plug>YSsurround
+nmap yss <Plug>Yssurround
+nmap yS <Plug>YSurround
+nmap ys <Plug>Ysurround
+vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
+nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())
+nnoremap <silent> <Plug>(startify-open-buffers) :call startify#open_buffers()
+vnoremap <Plug>(emmet-code-pretty) :call emmet#codePretty()
+nnoremap <Plug>(emmet-merge-lines) :call emmet#mergeLines()
+nnoremap <Plug>(emmet-anchorize-summary) :call emmet#anchorizeURL(1)
+nnoremap <Plug>(emmet-anchorize-url) :call emmet#anchorizeURL(0)
+nnoremap <Plug>(emmet-remove-tag) :call emmet#removeTag()
+nnoremap <Plug>(emmet-split-join-tag) :call emmet#splitJoinTag()
+nnoremap <Plug>(emmet-toggle-comment) :call emmet#toggleComment()
+nnoremap <Plug>(emmet-image-encode) :call emmet#imageEncode()
+nnoremap <Plug>(emmet-image-size) :call emmet#imageSize()
+nnoremap <Plug>(emmet-move-prev-item) :call emmet#moveNextPrevItem(1)
+nnoremap <Plug>(emmet-move-next-item) :call emmet#moveNextPrevItem(0)
+nnoremap <Plug>(emmet-move-prev) :call emmet#moveNextPrev(1)
+nnoremap <Plug>(emmet-move-next) :call emmet#moveNextPrev(0)
+vnoremap <Plug>(emmet-balance-tag-outword) :call emmet#balanceTag(-1)
+nnoremap <Plug>(emmet-balance-tag-outword) :call emmet#balanceTag(-1)
+vnoremap <Plug>(emmet-balance-tag-inward) :call emmet#balanceTag(1)
+nnoremap <Plug>(emmet-balance-tag-inward) :call emmet#balanceTag(1)
+nnoremap <Plug>(emmet-update-tag) :call emmet#updateTag()
+nnoremap <Plug>(emmet-expand-word) :call emmet#expandAbbr(1,"")
+vnoremap <Plug>(emmet-expand-abbr) :call emmet#expandAbbr(2,"")
+nnoremap <Plug>(emmet-expand-abbr) :call emmet#expandAbbr(3,"")
+nmap <silent> <Plug>CommentaryUndo :echoerr "Change your <Plug>CommentaryUndo map to <Plug>Commentary<Plug>Commentary"
+nnoremap <silent> <Plug>SurroundRepeat .
+imap S <Plug>ISurround
+imap s <Plug>Isurround
+imap  <Plug>DiscretionaryEnd
+imap  <Plug>Isurround
+imap m <Plug>(emmet-merge-lines)
+imap A <Plug>(emmet-anchorize-summary)
+imap a <Plug>(emmet-anchorize-url)
+imap k <Plug>(emmet-remove-tag)
+imap j <Plug>(emmet-split-join-tag)
+imap / <Plug>(emmet-toggle-comment)
+imap I <Plug>(emmet-image-encode)
+imap i <Plug>(emmet-image-size)
+imap N <Plug>(emmet-move-prev)
+imap n <Plug>(emmet-move-next)
+imap D <Plug>(emmet-balance-tag-outword)
+imap d <Plug>(emmet-balance-tag-inward)
+imap u <Plug>(emmet-update-tag)
+imap ; <Plug>(emmet-expand-word)
+imap , <Plug>(emmet-expand-abbr)
+inoremap jk 
+let &cpo=s:cpo_save
+unlet s:cpo_save
+set backupdir=~/.config/nvim/tmp
+set confirm
+set expandtab
+set guicursor=
+set helplang=en
+set hidden
+set runtimepath=~/.config/nvim,~/.vim/plugged/ctrlp.vim,~/.vim/plugged/vim-surround,~/.vim/plugged/vim-endwise,~/.vim/plugged/vim-commentary,~/.vim/plugged/vim-eunuch,~/.vim/plugged/nerdtree,~/.vim/plugged/emmet-vim,~/.vim/plugged/goyo.vim,~/.vim/plugged/deoplete.nvim,~/.vim/plugged/nvim-yarp,~/.vim/plugged/vim-hug-neovim-rpc,~/.vim/plugged/LanguageClient-neovim,~/.vim/plugged/vim-airline,~/.vim/plugged/vim-airline-themes,~/.vim/plugged/vim-startify,~/.vim/plugged/gruvbox,~/.vim/plugged/ayu-vim,/etc/xdg/xdg-ubuntu/nvim,/etc/xdg/nvim,~/.local/share/nvim/site,/usr/share/ubuntu/nvim/site,/usr/local/share/nvim/site,/usr/share/nvim/site,/var/lib/snapd/desktop/nvim/site,/usr/share/nvim/runtime,/var/lib/snapd/desktop/nvim/site/after,/usr/share/nvim/site/after,/usr/local/share/nvim/site/after,/usr/share/ubuntu/nvim/site/after,~/.local/share/nvim/site/after,/etc/xdg/nvim/after,/etc/xdg/xdg-ubuntu/nvim/after,~/.config/nvim/after
+set scrolloff=4
+set shiftround
+set shiftwidth=2
+set shortmess=filnxtToOFI
+set noshowmode
+set softtabstop=2
+set splitbelow
+set splitright
+set nostartofline
+set tabstop=2
+set termguicolors
+set wildignore=*.o,*.class
+set window=37
+" vim: set ft=vim :
