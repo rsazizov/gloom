@@ -7,6 +7,9 @@ int main() {
 
   while (renderSystem.isOpen()) {
     renderSystem.handleEvents();
+
+    renderSystem.beginFrame();
+    renderSystem.endFrame();
   }
 
   renderSystem.destroy();

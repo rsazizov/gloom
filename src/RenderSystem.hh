@@ -4,7 +4,9 @@
 #include <any>
 #include <glm/glm.hpp>
 
-class RenderSystem {
+#include "NonCopyable.hh"
+
+class RenderSystem : private NonCopyable {
 public:
   RenderSystem();
   ~RenderSystem();
@@ -19,7 +21,13 @@ public:
   int getHeight() const;
   glm::vec2 getSize() const;
 
+  void setClearColor(const glm::vec3& color);
+  const glm::vec3& getClearColor() const;
+
+  void beginFrame() const;
+  void endFrame() const;
 private:
+  glm::vec3 m_clearColor = glm::vec3(0, 0, 1);
   std::any m_window;
 };
 

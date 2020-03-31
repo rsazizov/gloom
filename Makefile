@@ -7,6 +7,7 @@ OBJ = obj
 BIN = bin
 
 SRCS = $(wildcard $(SRC)/*.cc)
+DEPS = $(wildcard $(SRC)/*.hh)
 OBJS = $(addprefix $(OBJ)/, $(patsubst %.cc,%.o,$(notdir $(SRCS))))
 
 TARGET_NAME = gloom
@@ -16,7 +17,7 @@ TARGET_ARGS =
 $(TARGET): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
 
-$(OBJ)/%.o: $(SRC)/%.cc
+$(OBJ)/%.o: $(SRC)/%.cc $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: run
