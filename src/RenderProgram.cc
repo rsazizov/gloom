@@ -88,3 +88,41 @@ void RenderProgram::destroy() {
   glDeleteProgram(m_id);
   m_id = 0;
 }
+
+bool RenderProgram::setUniform(const char* name, float v) {
+  glUniform1f(getUniformLocation(name), v);
+  return true;
+}
+
+bool RenderProgram::setUniform(const char* name, int v) {
+  glUniform1i(getUniformLocation(name), v);
+  return true;
+}
+
+bool RenderProgram::setUniform(const char* name, const glm::vec2& v) {
+  glUniform2fv(getUniformLocation(name), 1, &v.x);
+  return true;
+}
+
+bool RenderProgram::setUniform(const char* name, const glm::vec3& v) {
+  glUniform3fv(getUniformLocation(name), 1, &v.x);
+  return true;
+}
+
+bool RenderProgram::setUniform(const char* name, const glm::vec4& v) {
+  glUniform4fv(getUniformLocation(name), 1, &v.x);
+  return true;
+}
+
+bool RenderProgram::setUniform(const char* name, const glm::mat4& v) {
+  glUniformMatrix4fv(getUniformLocation(name), 1, false, &v[0][0]);
+  return true;
+}
+
+std::uint32_t RenderProgram::getUniformLocation(const char* name) {
+  if (!m_id) {
+    return 0;
+  }
+
+  return glGetUniformLocation(m_id, name);
+}

@@ -127,8 +127,11 @@ void RenderSystem::endFrame() const {
   glfwSwapBuffers(std::any_cast<GLFWwindow*>(m_window));
 }
 
+void RenderSystem::setRenderProgram(const RenderProgram& program) {
+  glUseProgram(program.m_id);
+}
+
 void RenderSystem::draw(const VertexBuffer& buffer,
-    const RenderProgram& program,
     Primitive primitive) {
 
   GLenum mode;
@@ -154,11 +157,9 @@ void RenderSystem::draw(const VertexBuffer& buffer,
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
-  glUseProgram(program.m_id);
-
   glDrawArrays(mode, 0, buffer.getVerticesCount());
 
-  glDisableVertexAttribArray(3);
   glDisableVertexAttribArray(2);
   glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(0);
 }

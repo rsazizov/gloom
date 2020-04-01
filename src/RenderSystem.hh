@@ -8,6 +8,7 @@
 
 class RenderProgram;
 class VertexBuffer;
+class InputSystem;
 
 class RenderSystem : private NonCopyable {
 public:
@@ -36,10 +37,13 @@ public:
   void beginFrame() const;
   void endFrame() const;
 
+  void setRenderProgram(const RenderProgram& renderProgram);
+
   void draw(const VertexBuffer& buffer,
-      const RenderProgram& program,
       Primitive primitive=Triangles);
 private:
+  friend class InputSystem;
+
   glm::vec3 m_clearColor = glm::vec3(0, 0, 0);
   std::any m_window;
 };

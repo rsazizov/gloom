@@ -2,11 +2,19 @@
 #include "VertexBuffer.hh"
 #include <GL/glew.h>
 #include "RenderProgram.hh"
+#include "InputSystem.hh"
+#include "Camera.hh"
+
+#include <GLFW/glfw3.h>
+#include <iostream>
 
 int main() {
   RenderSystem renderSystem;
 
   renderSystem.create(640, 480);
+
+  InputSystem input;
+  input.create(renderSystem);
 
   RenderProgram prog;
   prog.loadFromFile("assets/vert.glsl", "assets/frag.glsl");
@@ -28,15 +36,33 @@ int main() {
   VertexBuffer buff2;
   buff2.create(2, verts2);
 
+  glm::mat4 model(1);
+
+  renderSystem.setRenderProgram(prog);
+
+  Camera cam;
+
+  prog.setUniform("u_model", model);
+
+  cam.setPosition(glm::vec3(0, 0, 1));
+
+  float frameStart = (float) glfwGetTime();
+  float dt = 0;
   while (renderSystem.isOpen()) {
+    prog.setUniform("u_viewProjection", cam.getViewProjection());
+
     renderSystem.handleEvents();
+    cam.handleInput(input, dt);
 
     renderSystem.beginFrame();
 
-    renderSystem.draw(buff2, prog, RenderSystem::Lines);
-    renderSystem.draw(buff, prog);
+    /* renderSystem.draw(buff2, RenderSystem::Lines); */
+    renderSystem.draw(buff);
 
     renderSystem.endFrame();
+
+    dt = glfwGetTime() - frameStart;
+    frameStart = glfwGetTime();
   }
 
   buff.destroy();
