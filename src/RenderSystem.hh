@@ -8,6 +8,7 @@
 
 class RenderProgram;
 class VertexBuffer;
+class IndexBuffer;
 class InputSystem;
 
 class RenderSystem : private NonCopyable {
@@ -40,6 +41,10 @@ public:
   void setRenderProgram(const RenderProgram& renderProgram);
 
   void draw(const VertexBuffer& buffer,
+      Primitive primitive=Triangles);
+
+  void draw(const VertexBuffer& vbo,
+      const IndexBuffer& ibo,
       Primitive primitive=Triangles);
 private:
   friend class InputSystem;

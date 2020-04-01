@@ -1,6 +1,7 @@
 #include "RenderSystem.hh"
 #include "RenderProgram.hh"
 #include "VertexBuffer.hh"
+#include "IndexBuffer.hh"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -158,8 +159,35 @@ void RenderSystem::draw(const VertexBuffer& buffer,
   glEnableVertexAttribArray(2);
 
   glDrawArrays(mode, 0, buffer.getVerticesCount());
+}
 
-  glDisableVertexAttribArray(2);
-  glDisableVertexAttribArray(1);
-  glDisableVertexAttribArray(0);
+void RenderSystem::draw(const VertexBuffer& vbo,
+    const IndexBuffer& ibo, Primitive primitive) {
+
+
+  GLenum mode;
+
+  mode = std::map<Primitive, GLenum> {
+    {Triangles, GL_TRIANGLES},
+    {Lines, GL_LINES},
+    {Points, GL_POINTS}
+  }[primitive];
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo.m_id);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, position));
+
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, color));
+
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+      (void*) offsetof(Vertex, uv));
+
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id);
+  glDrawElements(mode, ibo.getIndicesCount(), GL_UNSIGNED_SHORT, (void*) 0);
 }

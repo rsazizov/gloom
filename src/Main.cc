@@ -2,10 +2,12 @@
 #include "VertexBuffer.hh"
 #include <GL/glew.h>
 #include "RenderProgram.hh"
+#include "IndexBuffer.hh"
 #include "InputSystem.hh"
 #include "Camera.hh"
 
 #include <GLFW/glfw3.h>
+#include <cstdint>
 #include <iostream>
 
 int main() {
@@ -21,20 +23,20 @@ int main() {
 
   Vertex verts[] = {
     {glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), glm::vec2(0, 0)},
-    {glm::vec3(1, 1, 0), glm::vec3(0, 1, 0), glm::vec2(0, 0)},
-    {glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)}
+    {glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec2(0, 0)},
+    {glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
+    {glm::vec3(1, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
   };
 
-  Vertex verts2[] = {
-    {glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
-    {glm::vec3(-1, -1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
+  std::uint16_t indices[] = {
+    0, 2, 1, 1, 3, 2
   };
+
+  IndexBuffer ibuff;
+  ibuff.create(6, indices);
 
   VertexBuffer buff;
-  buff.create(3, verts);
-
-  VertexBuffer buff2;
-  buff2.create(2, verts2);
+  buff.create(4, verts);
 
   glm::mat4 model(1);
 
@@ -56,8 +58,7 @@ int main() {
 
     renderSystem.beginFrame();
 
-    /* renderSystem.draw(buff2, RenderSystem::Lines); */
-    renderSystem.draw(buff);
+    renderSystem.draw(buff, ibuff);
 
     renderSystem.endFrame();
 
