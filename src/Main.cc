@@ -1,73 +1,32 @@
-#include "RenderSystem.hh"
-#include "VertexBuffer.hh"
-#include <GL/glew.h>
-#include "RenderProgram.hh"
-#include "IndexBuffer.hh"
-#include "InputSystem.hh"
-#include "Camera.hh"
-
-#include <GLFW/glfw3.h>
-#include <cstdint>
+#include "Wad.hh"
 #include <iostream>
 
-int main() {
-  RenderSystem renderSystem;
-
-  renderSystem.create(640, 480);
-
-  InputSystem input;
-  input.create(renderSystem);
-
-  RenderProgram prog;
-  prog.loadFromFile("assets/vert.glsl", "assets/frag.glsl");
-
-  Vertex verts[] = {
-    {glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), glm::vec2(0, 0)},
-    {glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec2(0, 0)},
-    {glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
-    {glm::vec3(1, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0)},
-  };
-
-  std::uint16_t indices[] = {
-    0, 2, 1, 1, 3, 2
-  };
-
-  IndexBuffer ibuff;
-  ibuff.create(6, indices);
-
-  VertexBuffer buff;
-  buff.create(4, verts);
-
-  glm::mat4 model(1);
-
-  renderSystem.setRenderProgram(prog);
-
-  Camera cam;
-
-  prog.setUniform("u_model", model);
-
-  cam.setPosition(glm::vec3(0, 0, 1));
-
-  float frameStart = (float) glfwGetTime();
-  float dt = 0;
-  while (renderSystem.isOpen()) {
-    prog.setUniform("u_viewProjection", cam.getViewProjection());
-
-    renderSystem.handleEvents();
-    cam.handleInput(input, dt);
-
-    renderSystem.beginFrame();
-
-    renderSystem.draw(buff, ibuff);
-
-    renderSystem.endFrame();
-
-    dt = glfwGetTime() - frameStart;
-    frameStart = glfwGetTime();
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cout << "Usage: gloom <file.wad>\n";
+    return 1;
   }
 
-  buff.destroy();
-  renderSystem.destroy();
+  const char* file = argv[1];
+
+  Wad wad;
+  wad.open(file);
+
+  Level level;
+  wad.readLevel("E1M3", level);
+
+  std::cout << level.things.size() << " things\n";
+  for (auto thing : level.things) {
+    std::cout << thing.x << " " << thing.y << " " << thing.angle << "\n";
+  }
+
+  std::cout << level.linedefs.size() << " linedefs\n";
+  for (auto linedef : level.linedefs) {
+    std::cout << linedef.start << " " << linedef.end << " "
+              << linedef.sidedefs[0] << " " << linedef.sidedefs[1] << "\n";
+  }
+
+  wad.close();
 
   return 0;
 }

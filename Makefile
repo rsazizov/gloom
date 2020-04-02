@@ -12,7 +12,7 @@ OBJS = $(addprefix $(OBJ)/, $(patsubst %.cc,%.o,$(notdir $(SRCS))))
 
 TARGET_NAME = gloom
 TARGET = $(BIN)/$(TARGET_NAME)
-TARGET_ARGS =
+TARGET_ARGS = ./assets/doom.wad
 
 $(TARGET): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
