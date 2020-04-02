@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 #define PAIR(x) {x, #x}
 
@@ -18,7 +18,7 @@ RenderSystem::~RenderSystem() {
 }
 
 const char* glEnumToString(GLenum e) {
-  return std::map<GLenum, const char*> {
+  return std::unordered_map<GLenum, const char*> {
     PAIR(GL_DEBUG_SOURCE_API),
     PAIR(GL_DEBUG_SOURCE_APPLICATION),
     PAIR(GL_DEBUG_SOURCE_OTHER),
@@ -132,17 +132,7 @@ void RenderSystem::setRenderProgram(const RenderProgram& program) {
   glUseProgram(program.m_id);
 }
 
-void RenderSystem::draw(const VertexBuffer& buffer,
-    Primitive primitive) {
-
-  GLenum mode;
-
-  mode = std::map<Primitive, GLenum> {
-    {Triangles, GL_TRIANGLES},
-    {Lines, GL_LINES},
-    {Points, GL_POINTS}
-  }[primitive];
-
+void RenderSystem::draw(const VertexBuffer& buffer, Primitive primitive) {
   glBindBuffer(GL_ARRAY_BUFFER, buffer.m_id);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -158,21 +148,11 @@ void RenderSystem::draw(const VertexBuffer& buffer,
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
-  glDrawArrays(mode, 0, buffer.getVerticesCount());
+  glDrawArrays(primitiveToMode(primitive), 0, buffer.getVerticesCount());
 }
 
 void RenderSystem::draw(const VertexBuffer& vbo,
     const IndexBuffer& ibo, Primitive primitive) {
-
-
-  GLenum mode;
-
-  mode = std::map<Primitive, GLenum> {
-    {Triangles, GL_TRIANGLES},
-    {Lines, GL_LINES},
-    {Points, GL_POINTS}
-  }[primitive];
-
   glBindBuffer(GL_ARRAY_BUFFER, vbo.m_id);
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
@@ -189,5 +169,18 @@ void RenderSystem::draw(const VertexBuffer& vbo,
   glEnableVertexAttribArray(2);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.m_id);
-  glDrawElements(mode, ibo.getIndicesCount(), GL_UNSIGNED_SHORT, (void*) 0);
+  glDrawElements(primitiveToMode(primitive), ibo.getIndicesCount(),
+      GL_UNSIGNED_SHORT, (void*) 0);
+}
+
+int RenderSystem::primitiveToMode(Primitive primitive) const {
+  if (primitive == Triangles) {
+    return GL_TRIANGLES;
+  } else if (primitive == Lines) {
+    return GL_LINES;
+  } else if (primitive == Points) {
+    return GL_POINTS;
+  }
+
+  return 0;
 }

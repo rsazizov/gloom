@@ -49,6 +49,9 @@ public:
 private:
   friend class InputSystem;
 
+  int primitiveToMode(Primitive primitive) const;
+
+  glm::mat4 m_viewProjection;
   glm::vec3 m_clearColor = glm::vec3(0, 0, 0);
   std::any m_window;
 };
