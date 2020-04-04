@@ -34,12 +34,15 @@ public:
   void setSpeed(float speed);
   float getSpeed() const;
 
-  glm::vec3 getForward() const;
   glm::mat4 getViewProjection();
 
+  glm::vec3 transform(const glm::vec3& vec) const;
+
   glm::vec3 getRight() const;
+  glm::vec3 getForward() const;
 
   void handleInput(InputSystem& input, float dt);
+
 private:
   glm::vec3 m_position = glm::vec3(0, 0, 0);
   glm::vec3 m_rotation = glm::vec3(0, 0, 0);
