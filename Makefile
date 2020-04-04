@@ -7,8 +7,8 @@ OBJ = obj
 BIN = bin
 
 SRCS = $(wildcard $(SRC)/*.cc)
-DEPS = $(wildcard $(SRC)/*.hh)
 OBJS = $(addprefix $(OBJ)/, $(patsubst %.cc,%.o,$(notdir $(SRCS))))
+DEPS = $(OBJS:%.o=%.d)
 
 TARGET_NAME = gloom
 TARGET = $(BIN)/$(TARGET_NAME)
@@ -17,8 +17,10 @@ TARGET_ARGS = ./assets/doom.wad
 $(TARGET): $(OBJS)
 	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
 
-$(OBJ)/%.o: $(SRC)/%.cc $(DEPS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(OBJ)/%.o: $(SRC)/%.cc
+	$(CXX) $(CXXFLAGS) -MMD -c $< -o $@
+
+-include $(DEPS)
 
 .PHONY: run
 run: $(TARGET)
