@@ -16,7 +16,8 @@ public:
   enum Primitive {
     Points,
     Lines,
-    Triangles
+    Triangles,
+    TriangleFan
   };
 
   RenderSystem();

@@ -25,3 +25,5 @@ make
 ## References
 
 [Mathew S Fell - The Unofficial Doom Spec](http://www.gamers.org/dhs/helpdocs/dmsp1666.html)
+
+[Fabien Sanglard - Game Engine Black Book: DOOM](http://fabiensanglard.net/gebbdoom/index.html)

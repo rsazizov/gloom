@@ -3,6 +3,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <cstdint>
+#include <stack>
 #include <iostream>
 
 #include "RenderSystem.hh"
@@ -12,10 +13,94 @@
 #include "InputSystem.hh"
 #include "Camera.hh"
 
+const float DOOM_SCALE = 1 / 100.f;
+
+void genLevelVBO(const Level& level, VertexBuffer& vbo) {
+  std::vector<Vertex> verts;
+
+  for (const auto& vertex : level.vertexes) {
+    verts.push_back({
+        {vertex.x * DOOM_SCALE, 0, vertex.y * DOOM_SCALE},
+        {0, 0.25f, 0.75f},
+        {0, 0}
+    });
+  }
+
+  vbo.create(verts.size(), verts.data());
+}
+
+bool genSubSector(const Level& level, const Ssector& ssector, IndexBuffer& ibo) {
+  std::vector<std::uint16_t> inds;
+
+  if (ssector.nSegs < 3) return false;
+
+  for (int i = 0; i < ssector.nSegs; ++i) {
+    int segId = ssector.firstSeg + i;
+    const Seg& seg = level.segs[segId];
+
+    inds.push_back(seg.start);
+  }
+
+  inds.push_back(inds.front());
+
+  ibo.create(inds.size(), inds.data());
+
+  return true;
+}
+
+bool isSsector(short id) {
+  /* return id & (1<<16); */
+  return false;
+}
+
+void traverse(const Level& level, const Node& root, std::vector<Vertex>& verts) {
+  verts.push_back({
+      {root.x * DOOM_SCALE, 0, root.y * DOOM_SCALE},
+      {0, 1, 0},
+      {0, 0}
+  });
+
+  verts.push_back({
+      {(root.x + root.dx) * DOOM_SCALE, 0, (root.y + root.dy) * DOOM_SCALE},
+      {0, 1, 0},
+      {0, 0}
+  });
+
+  if (!isSsector(root.leftChild)) {
+    traverse(level, level.nodes[root.leftChild], verts);
+  }
+
+  if (!isSsector(root.rightChild)) {
+    traverse(level, level.nodes[root.leftChild], verts);
+  }
+}
+
+void genBisectionLines(const Level& level, VertexBuffer& vbo) {
+  // Last node is the root.
+  std::vector<Vertex> verts;
+
+  for (const auto& node : level.nodes) {
+    verts.push_back({
+        {node.x * DOOM_SCALE, 0, node.y * DOOM_SCALE},
+        {0, 1, 0},
+        {0, 0}
+    });
+
+    verts.push_back({
+        {(node.x + node.dx) * DOOM_SCALE, 0, (node.y + node.dy) * DOOM_SCALE},
+        {0, 1, 0},
+        {0, 0}
+    });
+
+  }
+
+  vbo.create(verts.size(), verts.data());
+}
+
 int main(int argc, char** argv) {
   if (argc != 2) {
     std::cout << "Usage: gloom <file.wad>\n";
-    return 1;
+    return 666;
   }
 
   const char* file = argv[1];
@@ -25,9 +110,9 @@ int main(int argc, char** argv) {
 
   wad.open(file);
 
-  if (!wad.readLevel("E1M2", level)) {
+  if (!wad.readLevel("E1M1", level)) {
     wad.close();
-    return false;
+    return 666;
   }
 
   wad.close();
@@ -40,31 +125,27 @@ int main(int argc, char** argv) {
   inputSystem.create(renderSystem);
 
   VertexBuffer vbo;
-  IndexBuffer ibo;
+  genLevelVBO(level, vbo);
 
-  std::vector<Vertex> verts;
-  for (DVertex dv : level.vertexes) {
-    verts.push_back({
-      {dv.x / 100.f, 0, dv.y / 100.f},
-      {1, 0, 0},
-      {0, 0}
-    });
+  VertexBuffer bisectionVBO;
+  genBisectionLines(level, bisectionVBO);
+
+  std::vector<IndexBuffer*> ibos;
+
+  for (const auto& ssector : level.ssectors) {
+    IndexBuffer* ibo = new IndexBuffer();
+    if (genSubSector(level, ssector, *ibo)) {
+      ibos.push_back(ibo);
+    }
   }
-
-  std::vector<std::uint16_t> inds;
-  for (auto line : level.linedefs) {
-    inds.push_back(line.start);
-    inds.push_back(line.end);
-  }
-
-  vbo.create(verts.size(), verts.data());
-  ibo.create(inds.size(), inds.data());
 
   RenderProgram program;
   program.loadFromFile("assets/vert.glsl", "assets/frag.glsl");
 
   float dt = 0;
   float frameStart = glfwGetTime();
+
+  glPointSize(5);
 
   while (renderSystem.isOpen()) {
     renderSystem.handleEvents();
@@ -76,16 +157,21 @@ int main(int argc, char** argv) {
     program.setUniform("u_model", glm::mat4(1));
     program.setUniform("u_viewProjection", camera.getViewProjection());
 
-    renderSystem.draw(vbo, ibo, RenderSystem::Lines);
+    for (auto ibo : ibos) {
+      program.setUniform("u_color", glm::vec3(0, 0, 1));
+      renderSystem.draw(vbo, *ibo, RenderSystem::TriangleFan);
+      program.setUniform("u_color", glm::vec3(1, 0, 0));
+      renderSystem.draw(vbo, *ibo, RenderSystem::Points);
+    }
+
+    program.setUniform("u_color", glm::vec3(0, 1, 0));
+    renderSystem.draw(bisectionVBO, RenderSystem::Lines);
 
     renderSystem.endFrame();
 
     dt = glfwGetTime() - frameStart;
     frameStart = glfwGetTime();
   }
-
-  ibo.destroy();
-  vbo.destroy();
 
   renderSystem.destroy();
 

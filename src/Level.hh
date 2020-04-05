@@ -11,6 +11,9 @@ struct Thing {
   short options;
 };
 
+//            sidedefs[0]               sidedefs[1]
+//  start -----------------> end <----------------- start
+//            sidedefs[1]               sidedefs[0]
 struct Linedef {
   // Vertexes.
   short start;
@@ -51,8 +54,8 @@ struct Seg {
 };
 
 struct Ssector {
-  short segs;
-  short startSeg;
+  short nSegs;
+  short firstSeg;
 };
 
 struct Node {
@@ -68,7 +71,9 @@ struct Node {
     short xmax;
   } rightBounds, leftBounds;
 
-  short _rest[2];
+  // Either sector or node.
+  short leftChild;
+  short rightChild;
 };
 
 struct Sector {
@@ -77,7 +82,10 @@ struct Sector {
   char floortxt[8];
   char ceiltxt[8];
   short light;
-  short _rest[2];
+
+  // Can affect lighting.
+  short special;
+  short tag;
 };
 
 class Level {

@@ -180,6 +180,8 @@ int RenderSystem::primitiveToMode(Primitive primitive) const {
     return GL_LINES;
   } else if (primitive == Points) {
     return GL_POINTS;
+  } else if (primitive == TriangleFan) {
+    return GL_TRIANGLE_FAN;
   }
 
   return 0;

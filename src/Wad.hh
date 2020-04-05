@@ -61,9 +61,7 @@ private:
 
   std::unordered_map<std::string, std::unordered_map<std::string, int>>
     m_levels;
-
   std::vector<LumpInfo> m_lumps;
-
   std::ifstream m_file;
 };
 
